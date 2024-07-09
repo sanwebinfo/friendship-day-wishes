@@ -102,7 +102,7 @@ func wishHandler(w http.ResponseWriter, r *http.Request) {
 	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
 	<link rel="icon" type="image/png" sizes="196x196" href="/favicon-196.png" />
     <title>%s : Happy Friendship Wishes</title>
-	<meta name="description" content="Happy Friendship Day ASCII Art Greeting - Friendship Day Greeting Generator."/>
+	<meta name="description" content="Happy Friendship Day ASCII Text Greeting Art - Friendship Day Greeting Generator With Name."/>
 	<link rel="canonical" href="%s">
 	<link rel="preconnect" href="https://cdnjs.cloudflare.com">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" integrity="sha512-IgmDkwzs96t4SrChW29No3NXBIBv8baW490zk5aXvhCD8vuZM3yUSkbyTBcXohkySecyzIrUwiF/qV0cuPcL3Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -150,7 +150,7 @@ func wishHandler(w http.ResponseWriter, r *http.Request) {
 <br>
 </div></div>
 <br>
-<pre>$ curl -G --data-urlencode "name=%s" %s<br><br>$ http -b GET "%s" "name=%s"<br></pre>
+<pre>$ curl -G --data-urlencode "name=%s" %s<br><br>$ http -b GET "%s" "name==%s"<br></pre>
 <br>
 </div></section>
 </body>

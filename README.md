@@ -21,6 +21,8 @@ wishes@Your Name:~💚$
 
 ```
 
+> Happy Friendship Day ASCII Text Greeting Art - Friendship Day Greeting Generator With Name.  
+
 ## Features
 
 - Friendship Day ASCII art and Text Greeting with name
