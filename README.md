@@ -6,19 +6,18 @@ A simple Go application that displays Happy Friendship Day ASCII art and a text 
 
 ```yaml
 
-wishes@sanweb:~💚$
+wishes@Your Name:~💚$
 
 
-♥♥
-♥─▀██▀▀▀█
-♥──██▄█
-♥──██▀█
-♥─▄██ ANTASTIC Friend ♥♥
+ ★─▀██▀▀▀█
+ ★──██▄█
+ ★──██▀█
+ ★─▄██ ANTASTIC Friend ★★★
 
 
-
-Friendship is the compass
-that guides us through life's storm
+ Friendship is the compass
+ that guides us
+ through life's storm
 
 ```
 
@@ -63,6 +62,10 @@ curl "http://localhost:6054/wish?name=John-Doe"
 or
 
 curl -G -d "name=John Doe" http://localhost:6054/wish
+
+or
+
+curl -G --data-urlencode "name=John Doe" http://localhost:6054/wish
 
 ```
 

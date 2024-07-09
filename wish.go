@@ -24,22 +24,21 @@ func asciiArt(name string) string {
 	cleanedName := cleanName(name)
 	art := `
 
-♥♥
-♥─▀██▀▀▀█
-♥──██▄█
-♥──██▀█
-♥─▄██ ANTASTIC Friend ♥♥
+ ★─▀██▀▀▀█
+ ★──██▄█
+ ★──██▀█
+ ★─▄██ ANTASTIC Friend ★★★
 
 	`
 
 	quotes := []string{
-		"Friendship is the compass\nthat guides us through life's storm",
-		"Friendship doubles your joy\nand divides your sorrow",
+		" Friendship is the compass\n that guides us\n through life's storm",
+		" Friendship doubles your joy\n and divides your sorrow",
 	}
 
 	quote := quotes[len(name)%len(quotes)]
 
-	return fmt.Sprintf("\nwishes@%s:~💚$\n%s\n\n%s\n\n", escapeText(cleanedName), art, quote)
+	return fmt.Sprintf("\n wishes@%s:~💚$\n%s\n\n%s\n\n", escapeText(cleanedName), art, quote)
 }
 
 func generateSlug(name string) string {
@@ -55,8 +54,8 @@ func generateSlug(name string) string {
 }
 
 func validateName(name string) (string, error) {
-	if len(name) == 0 || len(name) > 40 {
-		return "", fmt.Errorf("name length must be between 1 and 40 characters")
+	if len(name) == 0 || len(name) > 36 {
+		return "", fmt.Errorf("name length must be between 1 and 36 characters")
 	}
 
 	if valid := regexp.MustCompile(`^[\p{L}\p{N}\p{P}\p{Zs}\p{M}\p{Sm}\p{So}\p{Sk}]+$`).MatchString(name); !valid {
@@ -83,6 +82,8 @@ func wishHandler(w http.ResponseWriter, r *http.Request) {
 	asciiText := asciiArt(name)
 	slugText := generateSlug(name)
 	baseURL := fmt.Sprintf("https://%s", r.Host)
+	wishURL := fmt.Sprintf("https://%s/wish", r.Host)
+	wishName := escapeText(name)
 	shareURL := fmt.Sprintf("%s/wish?name=%s", baseURL, slugText)
 
 	acceptHeader := r.Header.Get("Accept")
@@ -98,8 +99,11 @@ func wishHandler(w http.ResponseWriter, r *http.Request) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Friendship Wishes</title>
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+	<link rel="icon" type="image/png" sizes="196x196" href="/favicon-196.png" />
+    <title>%s : Happy Friendship Wishes</title>
 	<meta name="description" content="Happy Friendship Day ASCII Art Greeting - Friendship Day Greeting Generator."/>
+	<link rel="canonical" href="%s">
 	<link rel="preconnect" href="https://cdnjs.cloudflare.com">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" integrity="sha512-IgmDkwzs96t4SrChW29No3NXBIBv8baW490zk5aXvhCD8vuZM3yUSkbyTBcXohkySecyzIrUwiF/qV0cuPcL3Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -108,14 +112,13 @@ func wishHandler(w http.ResponseWriter, r *http.Request) {
         }
         body {
             font-family: monospace;
-            background-color: #f0f0f0;
+            background-color: #ffda79;
 			min-height: 100vh;
         }
 		#quote-container {
            margin: 10px auto;
-           border-radius: 10px;
            padding: 20px;
-           background-color: #222f3e;
+           background-color: #4b4b4b;
        }
        #quote {
            font-size: 20px;
@@ -128,7 +131,7 @@ func wishHandler(w http.ResponseWriter, r *http.Request) {
         pre {
             font-family: monospace;
             font-size: 14px;
-            background-color: #4b4b4b;
+            background-color: #192a56;
             color: #fdcb6e;
 			text-shadow: 0 0 3px #FFC312;
             padding: 20px;
@@ -140,17 +143,19 @@ func wishHandler(w http.ResponseWriter, r *http.Request) {
     </style>
 </head>
 <body>
-<section class="section"><div class="container"><div id="quote-card" class="card content"><div id="quote-container">
-   <pre>
-    %s
-	</pre>
-	<br>
-	<pre>curl %s<br><br>URL: %s</pre>
-	<br>
-</div></div></div></section>
+<section class="section"><div class="container"><div id="quote-card" class="card"><div id="quote-container">
+<pre>
+%s
+</pre>
+<br>
+</div></div>
+<br>
+<pre>$ curl -G --data-urlencode "name=%s" %s<br><br>$ http -b GET "%s" "name=%s"<br></pre>
+<br>
+</div></section>
 </body>
 </html>
-`, asciiText, shareURL, shareURL)
+`, cleanName(wishName), shareURL, asciiText, cleanName(wishName), wishURL, wishURL, cleanName(wishName))
 	} else {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
