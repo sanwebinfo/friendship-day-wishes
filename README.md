@@ -52,29 +52,33 @@ go run wish.go
 - Send a GET request to the `/wish` endpoint with a name query parameter:
 
 ```sh
-http://localhost:6054/wish?name=YourName
+
+## Browser View
+
+http://localhost:6054/wish/web/?name=YourName
+
 ```
 
 - cURL Request
 
 ```sh
 
-curl "http://localhost:6054/wish?name=John-Doe"
+curl "http://localhost:6054/wish/text?name=John-Doe"
 
 or
 
-curl -G -d "name=John Doe" http://localhost:6054/wish
+curl -G -d "name=John Doe" http://localhost:6054/wish/text
 
 or
 
-curl -G --data-urlencode "name=John Doe" http://localhost:6054/wish
+curl -G --data-urlencode "name=John Doe" http://localhost:6054/wish/text
 
 ```
 
 - httpie
 
 ```sh
-http -b GET "http://localhost:6054/wish" "name==John Doe"
+http -b GET "http://localhost:6054/wish/text" "name==John Doe"
 ```
 
 ## HTML Response
