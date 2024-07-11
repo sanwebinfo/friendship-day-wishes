@@ -87,7 +87,7 @@ If the Accept header includes `text/html`, you will get a formatted HTML respons
 
 ## Plain Text Response
 
-If the Accept header includes `text/plain`, you will get a plain text response with ANSI color codes.
+If the Accept header includes `text/plain`, you will get a plain text response.
 
 ## Build Package
 
