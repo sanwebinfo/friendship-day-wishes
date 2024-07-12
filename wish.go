@@ -17,6 +17,7 @@ func escapeText(text string) string {
 }
 
 func cleanName(name string) string {
+	name = strings.TrimSpace(name)
 	return strings.ReplaceAll(name, "-", " ")
 }
 
@@ -39,15 +40,37 @@ func asciiArt(name string) string {
 }
 
 func generateSlug(name string) string {
-	var result []string
+
+	replacements := map[string]string{
+		"+":   " ",
+		"%20": " ",
+		"%25": "",
+	}
+
+	for old, new := range replacements {
+		name = strings.ReplaceAll(name, old, new)
+	}
+
+	var result []rune
+	previousWasHyphen := false
+
 	for _, r := range name {
 		if unicode.IsLetter(r) || unicode.IsDigit(r) {
-			result = append(result, string(unicode.ToLower(r)))
-		} else if r == ' ' {
-			result = append(result, "-")
+			result = append(result, unicode.ToLower(r))
+			previousWasHyphen = false
+		} else if r == ' ' || r == '-' {
+			if !previousWasHyphen {
+				result = append(result, '-')
+				previousWasHyphen = true
+			}
+		} else {
+			previousWasHyphen = false
 		}
 	}
-	return strings.Join(result, "")
+
+	slug := string(result)
+	slug = strings.Trim(slug, "-")
+	return slug
 }
 
 func validateName(name string) (string, error) {
