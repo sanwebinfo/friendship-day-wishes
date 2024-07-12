@@ -267,11 +267,11 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
         <br>
         <div class="form-container">
             <h2 class="title is-4 has-text-centered has-text-light">Create Your Greeting</h2>
-            <form action="/wish/web" method="get">
+            <form action="/wish/web" method="get" onsubmit="sanitizeInput(event)">
                 <div class="field">
                     <label class="label has-text-success has-text-centered" for="name">Your Name</label>
                     <div class="control">
-                        <input class="input is-rounded" type="text" id="name" name="name" placeholder="Enter your name" required>
+                        <input class="input is-rounded" type="text" id="name" name="name" placeholder="Enter your name" minlength="2" maxlength="36" required>
                     </div>
                 </div>
                 <div class="field">
@@ -306,6 +306,22 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
     function hideNotification() {
         const notification = document.getElementById('copy-notification');
         notification.style.display = 'none';
+    }
+    function sanitizeInput(event) {
+        event.preventDefault();
+        const form = event.target;
+        const nameInput = form.querySelector('#name');
+        const sanitizedValue = slugify(nameInput.value.trim());
+        nameInput.value = sanitizedValue;
+        form.submit();
+    }
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, '-')
+            .replace(/^-+/, '')
+            .replace(/-+$/, '');
     }
 </script>
 
