@@ -155,6 +155,7 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
         body {
             font-family: "Roboto Condensed", sans-serif;
             background-color: #58B19F;
+            min-height: 100vh;
         }
         #quote-container {
             margin: 10px auto;
@@ -168,28 +169,31 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
             color: #333;
         }
         #quote-card {
-            margin: 20px auto;
+            background-color: #D6A2E8; /* White background */
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+            padding: 20px;
+            margin-top: 20px;
         }
         pre {
             font-family: monospace;
             font-size: 14px;
-            background-color: #192a56;
-            color: #fdcb6e;
-            text-shadow: 0 0 3px #FFC312;
+            background-color: #3d3d3d;
+            color: #ecf0f1;
+            text-shadow: 0 0 3px #ecf0f1;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 10px; 
             word-wrap: break-word;
             overflow-x: auto;
             line-height: inherit;
             position: relative;
-            white-space: pre-wrap; /* Ensure ASCII art is preserved */
         }
         .copy-icon {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             cursor: pointer;
-            color: #fdcb6e;
+            color: #ecf0f1;
         }
         .notification {
             font-family: "Roboto Condensed", sans-serif;
@@ -208,7 +212,8 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
             margin: 20px auto;
             padding: 20px;
             background-color: #4b4b4b;
-            border-radius: 5px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             max-width: 500px;
         }
         .form-container .field {
@@ -218,16 +223,17 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
         .form-container .input,
         .form-container .button {
 		    font-family: "Roboto Condensed", sans-serif;
+             border-radius: 10px;
             width: 100%%;
         }
         .form-container .button {
 		    font-family: "Roboto Condensed", sans-serif;
-            background-color: #4a90e2;
+            background-color: #25d366; 
             border-color: transparent;
             color: #fff;
         }
         .form-container .button:hover {
-            background-color: #357abd;
+            background-color: #1ebd74;
         }
     </style>
 </head>
@@ -235,48 +241,43 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
 
 <section class="section">
     <div class="container">
-        <div id="quote-card" class="card">
-            <div id="quote-container">
-                <div class="container">
-                    <div class="columns is-centered">
-                        <div class="column is-half">
-                            <div class="card">
-                                <div class="card-image">
-                                    <figure class="image">
-                                        <img src="https://img.sanweb.info/friend/friend?name=%s" alt="Happy Friendship Day" loading="lazy">
-                                    </figure>
-                                </div>
-                            </div>
-                        </div>
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img src="https://img.sanweb.info/friend/friend?name=%s" alt="Happy Friendship Day" loading="lazy">
+                        </figure>
                     </div>
-                    <div class="buttons is-centered">
-                        <a class="button is-warning is-rounded" href="https://img.sanweb.info/dl/file?url=https://img.sanweb.info/friend/friend?name=%s" target="_blank" rel="nofollow noopener"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Image</a>
-                    </div>
-                    <pre id="ascii-art">
+                </div>
+            </div>
+        </div>
+        <div class="buttons is-centered">
+            <a class="button is-warning is-rounded" href="https://img.sanweb.info/dl/file?url=https://img.sanweb.info/friend/friend?name=%s" target="_blank" rel="nofollow noopener">
+                <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Image
+            </a>
+        </div>
+        <pre id="ascii-art">
 %s
 <span class="icon copy-icon" onclick="copyToClipboard()">
     <i class="fas fa-copy"></i>
 </span>
-                    </pre>
-                    <br>
-                </div>
-            </div>
-        </div>
+        </pre>
         <br>
-        <pre>$ curl -G --data-urlencode "name=%s" %s<br><br>$ http -b GET "%s" "name==%s"<br></pre>
+        <pre>$ curl -G --data-urlencode "name=%s" %s<br><br>$ http -b GET "%s" "name==%s"</pre>
         <br>
         <div class="form-container">
             <h2 class="title is-4 has-text-centered has-text-light">Create Your Greeting</h2>
             <form action="/wish/web" method="get" onsubmit="sanitizeInput(event)">
                 <div class="field">
-                    <label class="label has-text-success has-text-centered" for="name">Your Name</label>
+                    <label class="label has-text-warning has-text-centered" for="name">Your Name</label>
                     <div class="control">
-                        <input class="input is-rounded" type="text" id="name" name="name" placeholder="Enter your name" minlength="2" maxlength="36" required>
+                        <input class="input" type="text" id="name" name="name" placeholder="Enter your name" minlength="2" maxlength="36" required>
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
-                        <button class="button is-primary is-rounded" type="submit">Generate Greeting</button>
+                        <button class="button is-primary" type="submit">Generate Greeting</button>
                     </div>
                 </div>
             </form>
