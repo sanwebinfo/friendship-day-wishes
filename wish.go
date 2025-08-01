@@ -40,7 +40,6 @@ func asciiArt(name string) string {
 }
 
 func generateSlug(name string) string {
-
 	replacements := map[string]string{
 		"+":   " ",
 		"%20": " ",
@@ -89,7 +88,7 @@ func validateName(name string) (string, error) {
 func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if name == "" {
-		http.Error(w, "Name is required", http.StatusBadRequest)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -103,8 +102,7 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
 	asciiText := asciiArt(name)
 	slugText := generateSlug(name)
 	baseURL := fmt.Sprintf("https://%s", r.Host)
-	//wishURL := fmt.Sprintf("https://%s/wish/web", r.Host)
-	TextURL := fmt.Sprintf("https://%s/wish/text", r.Host)
+	TextURL := fmt.Sprintf("%s/wish/text", baseURL)
 	shareURL := fmt.Sprintf("%s/wish/web?name=%s", baseURL, slugText)
 
 	setHTMLHeaders(w)
@@ -140,11 +138,11 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://img.sanweb.info">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" integrity="sha512-IgmDkwzs96t4SrChW29No3NXBIBv8baW490zk5aXvhCD8vuZM3yUSkbyTBcXohkySecyzIrUwiF/qV0cuPcL3Q==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.4/css/bulma.min.css" integrity="sha512-yh2RE0wZCVZeysGiqTwDTO/dKelCbS9bP2L94UvOFtl/FKXcNAje3Y2oBg/ZMZ3LS1sicYk4dYVGtDex75fvvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         html, body {
@@ -169,9 +167,9 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
             color: #333;
         }
         #quote-card {
-            background-color: #D6A2E8; /* White background */
-            border-radius: 15px; /* Rounded corners */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+            background-color: #D6A2E8;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             padding: 20px;
             margin-top: 20px;
         }
@@ -204,11 +202,11 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
             z-index: 1000;
         }
         .notification.is-primary {
-            background-color: #4a90e2;
+            background-color: #204269ff;
             color: #fff;
         }
         .form-container {
-		    font-family: "Roboto Condensed", sans-serif;
+            font-family: "Roboto Condensed", sans-serif;
             margin: 20px auto;
             padding: 20px;
             background-color: #4b4b4b;
@@ -217,17 +215,17 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
             max-width: 500px;
         }
         .form-container .field {
-		    font-family: "Roboto Condensed", sans-serif;
+            font-family: "Roboto Condensed", sans-serif;
             margin-bottom: 15px;
         }
         .form-container .input,
         .form-container .button {
-		    font-family: "Roboto Condensed", sans-serif;
-             border-radius: 10px;
+            font-family: "Roboto Condensed", sans-serif;
+            border-radius: 10px;
             width: 100%%;
         }
         .form-container .button {
-		    font-family: "Roboto Condensed", sans-serif;
+            font-family: "Roboto Condensed", sans-serif;
             background-color: #25d366; 
             border-color: transparent;
             color: #fff;
@@ -286,8 +284,7 @@ func wishHTMLHandler(w http.ResponseWriter, r *http.Request) {
 </section>
 
 <div class="notification is-primary" id="copy-notification">
-    <button class="delete" onclick="hideNotification()"></button>
-    Copied to clipboard
+    ✅ Copied to clipboard
 </div>
 
 <script>
@@ -355,6 +352,285 @@ func wishTextHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s\n\n Web View URL: %s\n\n", asciiText, shareURL)
 }
 
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+
+	setHTMLHeaders(w)
+	fmt.Fprintf(w, `
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="/favicon-196.png">
+
+    <title>Friendship Day Greeting Generator</title>
+    <meta name="description" content="Create beautiful ASCII art greetings for your friends.">
+
+    <meta property="og:site_name" content="Friendship Day Greeting Generator">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Friendship Day Greeting Generator">
+    <meta property="og:description" content="Create beautiful ASCII art greetings for your friends.">
+    <meta property="og:image" content="https://img.sanweb.info/friend/friend?name=Your-Name">
+    <meta property="og:image:alt" content="Happy Friendship Wishes">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="1080">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+        :root {
+            --primary-color: #58B19F;
+            --secondary-color: #25d366;
+            --dark-color: #2C3A47;
+            --light-color: #f5f6fa;
+            --accent-color: #FD7272;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%%;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .form-container {
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%%;
+            transform: translateY(-50%%);
+            color: var(--primary-color);
+        }
+        
+        input {
+            width: 100%%;
+            padding: 1rem 1rem 1rem 3rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(88, 177, 159, 0.2);
+        }
+        
+        input::placeholder {
+            font-family: 'Poppins', sans-serif;
+            color: #aaa;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%%;
+            max-width: 300px;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #1ebd74;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .feature {
+            flex: 1 1 200px;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .feature h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature p {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: #000;
+        }
+        
+        footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: black;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .features {
+                flex-direction: column;
+            }
+        }
+        button {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Friendship Day</div>
+        <h1>Create Your Personalized Greeting</h1>
+        <p class="subtitle">Generate beautiful ASCII art greetings to share with your friends and loved ones</p>
+        
+        <div class="form-container">
+            <form action="/wish/web" method="get">
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" name="name" placeholder="Enter your name" required 
+                           minlength="2" maxlength="36" 
+                           pattern="[A-Za-z ]+" 
+                           title="Please enter only letters and spaces">
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-magic"></i> Create
+                </button>
+            </form>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-paint-brush"></i>
+                <h3>Beautiful Art</h3>
+                <p>Stunning ASCII designs and wishing image with your name that impress your friends</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-share-alt"></i>
+                <h3>Easy Sharing</h3>
+                <p>Share your creations via social media or messaging</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Mobile Friendly</h3>
+                <p>Works perfectly on all devices</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Made with <i class="fas fa-heart" style="color: var(--accent-color);"></i> for Friendship Day</p>
+        </footer>
+    </div>
+</body>
+</html>
+`)
+}
+
 // setHTMLHeaders sets headers specific to HTML responses.
 func setHTMLHeaders(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -376,14 +652,309 @@ func setSecurityHeaders(w http.ResponseWriter) {
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	setTextHeaders(w)
-	fmt.Fprint(w, "404 Page Not Found")
+	setHTMLHeaders(w)
+	fmt.Fprintf(w, `
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="/favicon-196.png">
+
+    <title>Friendship Day Greeting Generator</title>
+    <meta name="description" content="Create beautiful ASCII art greetings for your friends.">
+
+    <meta property="og:site_name" content="Friendship Day Greeting Generator">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Friendship Day Greeting Generator">
+    <meta property="og:description" content="Create beautiful ASCII art greetings for your friends.">
+    <meta property="og:image" content="https://img.sanweb.info/friend/friend?name=Your-Name">
+    <meta property="og:image:alt" content="Happy Friendship Wishes">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="1080">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+        :root {
+            --primary-color: #58B19F;
+            --secondary-color: #25d366;
+            --dark-color: #2C3A47;
+            --light-color: #f5f6fa;
+            --accent-color: #FD7272;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%%;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .form-container {
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%%;
+            transform: translateY(-50%%);
+            color: var(--primary-color);
+        }
+        
+        input {
+            width: 100%%;
+            padding: 1rem 1rem 1rem 3rem;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(88, 177, 159, 0.2);
+        }
+        
+        input::placeholder {
+            color: #aaa;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%%;
+            max-width: 300px;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #1ebd74;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .feature {
+            flex: 1 1 200px;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .feature h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .features {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Friendship Day</div>
+        <h1>Create Your Personalized Greeting</h1>
+        <p class="subtitle">Generate beautiful ASCII art greetings to share with your friends and loved ones</p>
+        
+        <div class="form-container">
+            <form action="/wish/web" method="get">
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" name="name" placeholder="Enter your name" required 
+                           minlength="2" maxlength="36" 
+                           pattern="[A-Za-z ]+" 
+                           title="Please enter only letters and spaces">
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-magic"></i> Create
+                </button>
+            </form>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-paint-brush"></i>
+                <h3>Beautiful Art</h3>
+                <p>Stunning ASCII designs that impress your friends</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-share-alt"></i>
+                <h3>Easy Sharing</h3>
+                <p>Share your creations via social media or messaging</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Mobile Friendly</h3>
+                <p>Works perfectly on all devices</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Made with <i class="fas fa-heart" style="color: var(--accent-color);"></i> for Friendship Day</p>
+        </footer>
+    </div>
+</body>
+</html>
+`)
 }
 
 func internalServerErrorHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusInternalServerError)
-	setTextHeaders(w)
-	fmt.Fprint(w, "500 Internal Server Error")
+	setHTMLHeaders(w)
+	fmt.Fprintf(w, `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>500 Internal Server Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #58B19F;
+        }
+        h1 {
+            font-size: 50px;
+            color: #fff;
+        }
+        p {
+            font-size: 20px;
+            color: #fff;
+        }
+        a {
+            color: #fff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>500</h1>
+    <p>Internal Server Error</p>
+    <p><a href="/">Go to Home Page</a></p>
+</body>
+</html>
+`)
 }
 
 func main() {
@@ -391,13 +962,9 @@ func main() {
 
 	mux.HandleFunc("/wish/web", wishHTMLHandler)
 	mux.HandleFunc("/wish/text", wishTextHandler)
-
 	mux.HandleFunc("/404", notFoundHandler)
 	mux.HandleFunc("/500", internalServerErrorHandler)
-
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.NotFoundHandler().ServeHTTP(w, r)
-	})
+	mux.HandleFunc("/", homeHandler)
 
 	log.Printf("Server starting on port %d\n", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux); err != nil {
